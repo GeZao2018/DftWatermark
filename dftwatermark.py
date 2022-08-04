@@ -201,7 +201,7 @@ if __name__ == '__main__':
     # img_marked = cv2.medianBlur(img_marked, 5)
     # img_marked = cv2.resize(img_marked, (600, 600))
     message_recover = recover(img_marked)
-    print(len(message_embed))
+    print(len(message_embed), np.sum(filter_m))
     cnt, total = 0, len(message_embed)
     for i in range(total):
         if message_recover[i] == message_embed[i]:
