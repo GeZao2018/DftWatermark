@@ -22,6 +22,22 @@ def get_points(filename, dis=100):
     cv2.waitKey()
 
 
+def rotate_image(image, angle):
+    '''
+     . 旋转图片
+     . @param image    opencv读取后的图像
+     . @param angle    (逆)旋转角度
+    '''
+
+    h, w = image.shape[:2]  # 返回(高,宽,色彩通道数),此处取前两个值返回
+    newW = int(h * np.fabs(np.sin(np.radians(angle))) + w * np.fabs(np.cos(np.radians(angle))))
+    newH = int(w * np.fabs(np.sin(np.radians(angle))) + h * np.fabs(np.cos(np.radians(angle))))
+    M = cv2.getRotationMatrix2D((w / 2, h / 2), angle, 1)
+    M[0, 2] += (newW - w) / 2
+    M[1, 2] += (newH - h) / 2
+    return cv2.warpAffine(image, M, (newW, newH), borderValue=(255, 255, 255))
+
+
 def embed(filename):
     original_image = cv2.imread(filename)
     original_image_b = original_image[:, :, 0]
@@ -44,18 +60,20 @@ def embed(filename):
 def test_embed(filename):
     original_image = cv2.imread(filename)
 
-    # resized_image = cv2.resize(original_image, (300, 300))
+    # resized_image = cv2.resize(original_image, (350, 350))
     # cv2.imwrite('img/temp.jpg', resized_image)
-    # original_image = cv2.imread('img/temp.jpg')
-    # original_image = cv2.resize(original_image, (400, 400))
+    rotated_image = rotate_image(original_image, 180)
+    cv2.imwrite('img/temp.jpg', rotated_image)
+    original_image = cv2.imread('img/temp.jpg')
+    original_image = cv2.resize(original_image, (400, 400))
 
     original_image_b = original_image[:, :, 0]
 
     # original_image_b = cv2.blur(original_image_b, (7, 7))
     # original_image_b = cv2.GaussianBlur(original_image_b, (7, 7), 250)
     # original_image_b = cv2.medianBlur(original_image_b, 5)
-    # original_image_b[0:40, :] = original_image_b[360:400, :] = 0
-    # original_image_b[:, 0:40] = original_image_b[:, 360:400] = 0
+    # original_image_b[0:20, :] = original_image_b[380:400, :] = 0
+    # original_image_b[:, 0:20] = original_image_b[:, 380:400] = 0
 
     cv2.imshow('original', original_image_b)
     cv2.waitKey()
